@@ -78,10 +78,10 @@ const Hero = () => {
           <HeroOneButton
             title={
               <>
-                {"Let's explore the beach tourism in Bali\n"}
+                {"Let&apos;s explore the beach tourism in Bali\n"}
               </>
             }
-            description="There are many beaches in Bali, what are you waiting for, let's explore them now!."
+            description="There are many beaches in Bali, what are you waiting for, let&apos;s explore them now!."
             button={
               <Link href="">
                 <button className='xl bg-blue-600 p-4'>Get Started</button>
