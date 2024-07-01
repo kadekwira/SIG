@@ -1,33 +1,112 @@
-"use client"
-import React, { useEffect, useState, useRef } from 'react';
-import mapboxgl from 'mapbox-gl';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import MapboxDirections from '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions';
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import customData from '../data/pantai';
-import RouteCard from '../../components/card/RouteCard';
-import '../../direction.css'; // Stylesheet for direction icons
+"use client";
+
+import React, { useEffect, useState, useRef } from "react";
+import mapboxgl from "mapbox-gl";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import "mapbox-gl/dist/mapbox-gl.css";
+import RouteCard from "../../components/card/RouteCard";
+import "../../direction.css";
+import { fetchData } from "../../helper/fetchData.js";
+import { useRouter, useSearchParams } from "next/navigation";
+import mbxGeocoding from '@mapbox/mapbox-sdk/services/geocoding';
+import axios from 'axios';
 
 const MapsPage = () => {
   const [selectedPlace, setSelectedPlace] = useState(null);
-  const [userLocation, setUserLocation] = useState([115.168640, -8.719266]);
-  const [route, setRoute] = useState(null); 
+  const [userLocation, setUserLocation] = useState(null);
+  const [route, setRoute] = useState(null);
   const [directions, setDirections] = useState(null);
-  const destinationMarkerRef = useRef(null); 
+  const destinationMarkerRefs = useRef([]);
+  const [nearestBeaches, setNearestBeaches] = useState([]);
+  const [beachData, setBeachData] = useState([]);
+  const [city, setCity] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const geocodingClient = mbxGeocoding({ accessToken: process.env.NEXT_PUBLIC_MAPS_TOKEN });
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleOnClose = () => {
     setSelectedPlace(null);
-    setRoute(null); 
+    setRoute(null);
   };
 
   useEffect(() => {
-    const token = process.env.NEXT_PUBLIC_MAPS_TOKEN;
+    const getData = async () => {
+      const result = await fetchData();
+      setBeachData(result);
+    };
+    getData();
+  }, []);
 
+
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      if (!selectedPlace) return;
+  
+      const { geometry } = selectedPlace;
+      const { _long, _lat } = geometry.coordinates;
+  
+      try {
+        const response = await geocodingClient.reverseGeocode({
+          query: [_long, _lat],
+          limit: 1
+        }).send();
+        const place = response.body.features[0];
+        const locality = place.context.find(c => c.id.includes('place'));
+        const cityName = locality ? locality.text : 'Unknown Location';
+        setCity(cityName);
+
+        // Fetch weather data
+        if (cityName !== 'Unknown Location') {
+          try {
+            const weatherResponse = await axios.get(`https://api.collectapi.com/weather/getWeather?data.lang=id&data.city=${cityName}`, {
+              headers: {
+                authorization: `apikey 2LAYSVC3lp9gMmOn6ilbCX:7tjNXsXpYRUxxuBtCpsogX`
+              }
+            });
+            const weatherData = weatherResponse.data.result[0];
+            setWeather(weatherData);
+          } catch (weatherError) {
+            console.error('Error fetching weather data', weatherError);
+            setWeather(null);
+          }
+        }
+      } catch (error) {
+        console.error('Error retrieving location', error);
+        setCity(null);
+      }
+    };
+  
+    fetchWeatherData();
+  }, [selectedPlace]);
+  
+  useEffect(() => {
+    const getCurrentLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+      
+          const { longitude, latitude } = position.coords;
+          setUserLocation([longitude, latitude]);
+        },
+        (error) => {
+          console.error("Error obtaining location:", error);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    };
+
+    getCurrentLocation();
+  }, []);
+  useEffect(() => {
+    if (!beachData || !userLocation) return;
+
+    const token = process.env.NEXT_PUBLIC_MAPS_TOKEN;
     const map = new mapboxgl.Map({
       accessToken: token,
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v12',
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v12",
       zoom: 10,
       center: userLocation,
       attributionControl: false,
@@ -35,38 +114,50 @@ const MapsPage = () => {
 
     const geolocate = new mapboxgl.GeolocateControl({
       positionOptions: {
-        enableHighAccuracy: true
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
       },
       trackUserLocation: true,
       showUserHeading: true,
-      showUserLocation: true
+      showUserLocation: true,
     });
 
     const navigation = new mapboxgl.NavigationControl({
       showCompass: true,
-      showZoom: true
+      showZoom: true,
     });
+
+    const userMarker = new mapboxgl.Marker({
+      color: "#3366FF",
+    })
+      .setLngLat(userLocation)
+      .addTo(map);
 
     const localGeocoder1 = (query) => {
       const matchingFeatures = [];
-      for (const feature of customData.features) {
-        if (feature.properties && feature.properties.name.toLowerCase().includes(query.toLowerCase())) {
+      beachData.forEach((item) => {
+        if (item.properties.name.toLowerCase().includes(query.toLowerCase())) {
           matchingFeatures.push({
-            type: 'Feature',
-            geometry: feature.geometry,
+            type: "Feature",
+            geometry: item.geometry,
             properties: {
-              name: feature.properties.name,
-              image: feature.properties.image,
-              rating: feature.properties.rating,
-              kecamatan: feature.properties.kecamatan,
-              location: feature.properties.location
+              id: item.id,
+              name: item.properties.name,
+              image: item.properties.image_tumb,
+              rating: item.properties.rating,
+              kecamatan: item.properties.kecamatan,
+              location: item.properties.alamat,
             },
-            place_name: feature.properties.name,
-            center: feature.geometry.coordinates,
-            place_type: ['beach']
+            place_name: item.properties.name,
+            center: [
+              item.geometry.coordinates._long,
+              item.geometry.coordinates._lat,
+            ],
+            place_type: ["beach"],
           });
         }
-      }
+      });
       return matchingFeatures;
     };
 
@@ -74,95 +165,197 @@ const MapsPage = () => {
       accessToken: token,
       localGeocoder: localGeocoder1,
       zoom: 14,
-      placeholder: 'Masukkan pencarian, contoh: Pantai',
+      placeholder: "Masukkan pencarian, contoh: Pantai",
       mapboxgl: mapboxgl,
-      language: 'id',
-      trackProximity: false
+      language: "id",
+      trackProximity: false,
     });
 
-    geocoder.on('result', (event) => {
-      const feature = event.result;
-      if (feature.properties && feature.properties.name) {
-        setSelectedPlace(feature);
+    geocoder.on("result", (event) => {
+      const features = event.result;
 
-        // Remove previous destination marker if exists
-        if (destinationMarkerRef.current) {
-          destinationMarkerRef.current.remove();
-        }
+      if (features) {
+       
+        setSelectedPlace(features);
+        clearDestinationMarkers();
 
-        // Create a new marker for the selected destination
         const destinationMarker = new mapboxgl.Marker({
-          color: '#FF0000' // Red color for destination marker
+          color: "#FF0000",
         })
-          .setLngLat(feature.geometry.coordinates)
+          .setLngLat([
+            features.geometry.coordinates._long,
+            features.geometry.coordinates._lat,
+          ])
           .addTo(map);
+        destinationMarkerRefs.current.push(destinationMarker);
 
-        destinationMarkerRef.current = destinationMarker; // Save marker to ref
-
-        // Set directions if available
         if (userLocation && directions) {
           directions.setOrigin(userLocation);
-          directions.setDestination(feature.geometry.coordinates);
+          directions.setDestination(features.geometry.coordinates);
         }
       } else {
         setSelectedPlace(null);
       }
     });
 
-    map.addControl(geocoder, 'top-right');
-    map.addControl(geolocate, 'bottom-right');
-    map.addControl(navigation, 'bottom-right');
+    map.addControl(geocoder, "top-right");
+    map.addControl(geolocate, "bottom-right");
+    map.addControl(navigation, "bottom-right");
 
     const directionsInstance = new MapboxDirections({
       accessToken: token,
-      unit: 'metric',
-      profile: 'mapbox/driving',
+      unit: "metric",
+      profile: "mapbox/driving",
       controls: {
-        inputs: true, // Enable inputs for origin and destination
+        inputs: true,
         instructions: true,
-        profileSwitcher: true // Enable profile switcher
+        profileSwitcher: true,
       },
-      language: 'id',
-      interactive: false, // Disable interaction to set origin and destination
-      clickToSetOrigin: false, // Optional, disable if not needed
-      clickToSetDestination: false, // Optional, disable if not needed
-      marker: false 
+      language: "id",
+      interactive: false,
+      clickToSetOrigin: false,
+      clickToSetDestination: false,
+      marker: false,
     });
 
-    directionsInstance.on('route', (event) => {
+    directionsInstance.on("route", (event) => {
       const route = event.route[0];
-      setRoute(route); // Update route state with the new route
+      setRoute(route);
     });
 
     setDirections(directionsInstance);
-    map.addControl(directionsInstance, 'top-left');
+    map.addControl(directionsInstance, "top-left");
 
-    map.on('load', () => {
-      geolocate.trigger();
-    });
+    if (searchParams.get("findNearest") === "true") {
+      findNearestBeachesFromUserLocation(map);
+    }
+    if(searchParams.get("kecamatan")){
+      const dataKecamatan = searchParams.get("kecamatan");
+      findKecamatan(dataKecamatan,map)
+    }
+    return () => map.remove();
+  }, [beachData, userLocation, searchParams]);
 
-    geolocate.on('geolocate', (position) => {
-      const { longitude, latitude } = position.coords;
-      setUserLocation([longitude, latitude]);
-      console.log(position.coords)
 
-      // Update map center when user location changes
-      map.setCenter([longitude, latitude]);
-
-      // Add origin marker if not already added
-      if (!destinationMarkerRef.current) {
-        const originMarker = new mapboxgl.Marker({
-          color: '#3366FF' // Blue color for origin marker
+  const findKecamatan = (kecamatan, map) => {
+    try {
+      const beachesInKecamatan = beachData.filter((beach) => {
+        return beach.properties.kecamatan.toLowerCase() === kecamatan.toLowerCase();
+      });
+  
+      clearDestinationMarkers();
+  
+      beachesInKecamatan.forEach((beach) => {
+        const marker = new mapboxgl.Marker({
+          color: "#36BA98",
         })
-          .setLngLat([longitude, latitude])
+          .setLngLat([
+            beach.geometry.coordinates._long,
+            beach.geometry.coordinates._lat,
+          ])
+          .addTo(map);
+  
+        marker.getElement().addEventListener("click", () => {
+          setSelectedPlace({
+            geometry: {
+              coordinates: {
+                "_long": beach.geometry.coordinates._long,
+                "_lat": beach.geometry.coordinates._lat
+              },
+            },
+            properties: {
+              id: beach.id,
+              name: beach.properties.name,
+              image: beach.properties.image_tumb,
+              rating: beach.properties.rating,
+              kecamatan: beach.properties.kecamatan,
+              alamat: beach.properties.alamat,
+            },
+          });
+        });
+  
+        destinationMarkerRefs.current.push(marker);
+      });
+  
+      setNearestBeaches(beachesInKecamatan);
+    } catch (error) {
+      console.error("Error adding markers:", error);
+    }
+  };
+  
+  const findNearestBeachesFromUserLocation = (map) => {
+    try {
+      const beachesWithin10km = beachData.filter((beach) => {
+        const distance = calculateDistance(
+          userLocation[1],
+          userLocation[0],
+          beach.geometry.coordinates._lat,
+          beach.geometry.coordinates._long
+        );
+        return distance <= 10;
+      });
+
+      clearDestinationMarkers();
+
+      beachesWithin10km.forEach((beach) => {
+        const marker = new mapboxgl.Marker({
+          color: "#36BA98",
+        })
+          .setLngLat([
+            beach.geometry.coordinates._long,
+            beach.geometry.coordinates._lat,
+          ])
           .addTo(map);
 
-        destinationMarkerRef.current = originMarker; // Save marker to ref
-      }
-    });
+        marker.getElement().addEventListener("click", () => {
+          setSelectedPlace({
+            geometry: {
+              coordinates: {
+                "_long":beach.geometry.coordinates._long,
+                "_lat":beach.geometry.coordinates._lat
+              },
+            },
+            properties: {
+              id: beach.id,
+              name: beach.properties.name,
+              image: beach.properties.image_tumb,
+              rating: beach.properties.rating,
+              kecamatan: beach.properties.kecamatan,
+              alamat: beach.properties.alamat,
+            },
+          });
+        });
 
-    return () => map.remove();
-  }, []);
+        destinationMarkerRefs.current.push(marker);
+      });
+
+      setNearestBeaches(beachesWithin10km);
+    } catch (error) {
+      console.error("Error adding markers:", error);
+    }
+  };
+
+  const clearDestinationMarkers = () => {
+    destinationMarkerRefs.current.forEach((marker) => marker.remove());
+    destinationMarkerRefs.current = [];
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371e3;
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c;
+
+    return distance / 1000;
+  };
 
   const handleRouteClick = (destination) => {
     if (userLocation && destination && directions) {
@@ -171,37 +364,92 @@ const MapsPage = () => {
     }
   };
 
+  const handleDetailClick = (id) => {
+  
+    router.push(`/detail/${id}`);
+  };
+
+  if (!userLocation) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+          <div
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+            role="status">
+            <span
+              className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+            >Loading...</span>
+          </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex-grow relative" id="map" style={{ height: '100%', width: '100%' }}>
+      <div
+        className="flex-grow relative"
+        id="map"
+        style={{ height: "100%", width: "100%" }}
+      >
+         
         {selectedPlace && (
           <div className="absolute bottom-5 left-5 w-72 h-80 bg-white p-5 shadow-lg z-10 rounded-lg text-black">
-            <button 
+            <button
               className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold"
               onClick={handleOnClose}
             >
               X
             </button>
-            {selectedPlace.properties.image && <img src={selectedPlace.properties.image} alt={selectedPlace.properties.name} className="w-full h-32 object-cover mb-2 rounded-lg"/>}
+            {selectedPlace.properties.image && (
+              <img
+                src={selectedPlace.properties.image}
+                alt={selectedPlace.properties.name}
+                className="w-full h-32 object-cover mb-2 rounded-lg"
+              />
+            )}
             <p className="font-bold">{selectedPlace.properties.name}</p>
-            {selectedPlace.properties.rating && <p>Rating: {selectedPlace.properties.rating}</p>}
-            {selectedPlace.properties.kecamatan && <p>Kecamatan: {selectedPlace.properties.kecamatan}</p>}
+            {selectedPlace.properties.rating && (
+              <p>Rating: {selectedPlace.properties.rating}</p>
+            )}
+            {selectedPlace.properties.kecamatan && (
+              <p>Kecamatan: {selectedPlace.properties.kecamatan}</p>
+            )}
+                {weather && (
+                  <div className="flex items-center mt-1">
+                    <img
+                      src={weather.icon}
+                      alt={weather.icon}
+                      className="w-5 h-5 mr-2"
+                    />
+                    <p> {weather.description} ({weather.degree}°C)</p>
+                </div>
+                )}
             <div className="flex justify-between mt-4">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg w-32 m-2">Detail</button>
-              <button 
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg w-32 m-2"
+                onClick={() =>
+                  handleDetailClick(selectedPlace.properties.id)
+                }
+              >
+                Detail
+              </button>
+              <button
                 className="bg-green-500 text-white px-4 py-2 rounded-lg w-32 m-2"
-                onClick={() => handleRouteClick(selectedPlace.geometry.coordinates)}
+                onClick={() =>
+                  handleRouteClick([
+                    selectedPlace.geometry.coordinates._long,
+                    selectedPlace.geometry.coordinates._lat,
+                  ])
+                }
               >
                 Rute
               </button>
             </div>
           </div>
         )}
-        <RouteCard route={route} onClose={() => setRoute(null)} /> {/* Render the RouteCard */}
+        <RouteCard route={route} onClose={() => setRoute(null)} />
       </div>
     </div>
   );
 };
 
 export default MapsPage;
-

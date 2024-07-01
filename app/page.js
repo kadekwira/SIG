@@ -69,11 +69,6 @@ const Hero = () => {
                 <li>
                   <button onClick={() => setShowLoginModal(true)} className='mx-4'>Sign in</button>
                 </li>
-                <li>
-                  <button onClick={() => setShowRegisterModal(true)} className='mx-4'>
-                    Sign up
-                  </button>
-                </li>
               </>
             )}
           </NavbarTwoColumns>
