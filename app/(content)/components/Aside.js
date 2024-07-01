@@ -58,10 +58,10 @@ const Sidebar = () => {
         <hr className="border-t border-gray-300 my-4" />
         <div className="flex items-center mt-3 gap-4 text-lg ml-2">
           <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 "/> 
-          <p>{city}</p>
+          <p className="text-white">{city}</p>
         </div>
         {weather && (
-          <div className="flex items-center mt-3">
+          <div className="flex items-center mt-3 text-white">
               <img
                 src={weather.icon}
                 alt={weather.icon}

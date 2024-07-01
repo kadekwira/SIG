@@ -1,4 +1,5 @@
 import React from 'react';
+import {FooterCopyright} from './FooterCopyright'
 
 const CenteredFooter = (props) => (
   <div className="text-center text-gray-400">
