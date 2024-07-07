@@ -3,9 +3,8 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { firestore } from '../../config/firebase_config';
 import { doc, getDoc } from "firebase/firestore";
-import './style.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot,faStar} from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faStar } from '@fortawesome/free-solid-svg-icons';
 
 const DetailPage = () => {
   const params = useParams();
@@ -36,107 +35,67 @@ const DetailPage = () => {
       };
 
       fetchData();
-      
     }
   }, [params.id]);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   return (
-<div className="container p-5">
-<nav className="relative px-4 py-4 flex justify-between items-center bg-white">
-  <a className="text-3xl font-bold leading-none text-gray-800" href="">
-  {data.properties.name}
-  </a>
-  <ul className="hidden absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2 lg:flex lg:mx-auto lg:flex lg:items-center lg:w-auto lg:space-x-6">
-    <li>
-      <a className="text-sm text-gray-400 hover:text-blue-500" href="/">
-        Home
-      </a>
-    </li>
-    <li>
-      <a className="text-sm text-gray-400 hover:text-blue-500" href="/maps">
-        Maps
-      </a>
-    </li>
-    
-  </ul>
-
-</nav>
-<section className="bg-white py-3">
-    <div className="container py-8 px-6 mx-auto">
-    <img
-            className="hover:grow hover:shadow-lg"
-            src={data.properties.image_tumb}
-    />
-    <p className="text-gray-800 mt-5">
-      <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 text-xl mr-3"/>
-      <span>{data.properties.alamat}</span>
-    </p>
-    <p className="text-gray-800 mt-5">
-      <FontAwesomeIcon icon={faStar} className="text-yellow-500 text-xl mr-3"/>
-      <span>{data.properties.rating}</span>
-    </p>
-    </div>
-  </section>
-  <section className="bg-white py-8">
-    <div className="container py-8 px-6 mx-auto">
-      <a
-        className="uppercase tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl mb-8"
-      >
-        Deskripsi
-      </a>
-      <p className="mt-4 text-gray-800">
-        {data.properties.deskripsi}
-      </p>
-    </div>
-  </section>
-  <section className="bg-white py-8">
-    <div className="container py-8 px-6 mx-auto">
-      <a
-        className="uppercase tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl mb-8"
-       
-      >
-        Fasilitas
-      </a>
-      <p className="mt-4 text-gray-800">
-        <div dangerouslySetInnerHTML={{ __html: data.properties.fasilitas }} />
-
-      </p>
-    </div>
-  </section>
-  <section className="bg-white py-8">
-    <div className="container mx-auto flex items-center flex-wrap pt-4 pb-12">
-      <nav id="store" className="w-full z-30 top-0 px-6 py-1">
-        <div className="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 px-2 py-3">
-          <a
-            className="uppercase tracking-wide no-underline hover:no-underline font-bold text-gray-800 text-xl "
-            
-          >
-            Galery
-          </a>
+    <div className="container mx-auto p-5">
+      <nav className="bg-gray-600 shadow-md py-4 px-6 flex justify-between items-center w-full fixed top-0 left-0 right-0 z-10">
+        <a className="text-2xl font-bold text-white" href="/">
+         {data.properties.name}
+        </a>
+        <div className="flex space-x-4">
+          <a href="/" className="text-white hover:text-gray-800">Home</a>
+          <a href="/maps" className="text-white hover:text-gray-800">Maps</a>
         </div>
       </nav>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ml-2">
-            <img
-              className="hover:grow hover:shadow-lg"
-              src={data.properties.galeri.foto1}
-            />
-            <img
-              className="hover:grow hover:shadow-lg"
-              src={data.properties.galeri.foto2}
-            />
-            <img
-              className="hover:grow hover:shadow-lg"
-              src={data.properties.galeri.foto3}
-            />
+
+      <div className="pt-24">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">{data.properties.name}</h1>
+          <p className="text-gray-800 flex justify-center items-center mb-3">
+            <FontAwesomeIcon icon={faLocationDot} className="text-blue-500 text-xl mr-2"/>
+            {data.properties.alamat}
+          </p>
+          <p className="text-gray-800 flex justify-center items-center">
+            <FontAwesomeIcon icon={faStar} className="text-yellow-500 text-xl mr-2"/>
+            {data.properties.rating}
+          </p>
+        </div>
+
+        <div className="mb-32">
+          <img className="h-96 w-full object-cover rounded-md" src={data.properties.image_tumb} alt={data.properties.name} />
+        </div>
+
+        <section className='mb-32'>
+        <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Deskripsi & Fasilitas</h2>
+        <div className="flex flex-col md:flex-row mb-12 space-y-8 md:space-y-0 md:space-x-8">
+          <section className="flex-1 bg-white shadow-md rounded-lg overflow-hidden p-6">
+            <p className="text-gray-800 text-center">
+              {data.properties.deskripsi}
+            </p>
+          </section>
+
+          <section className="flex-1 bg-white shadow-md rounded-lg overflow-hidden p-6">
+            <div className="text-gray-800 text-center" dangerouslySetInnerHTML={{ __html: data.properties.fasilitas }} />
+          </section>
+        </div>
+        </section>
+
+        <section>
+          <h2 className="font-bold text-2xl text-center text-gray-800 mb-8">Galery</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <img className="w-full h-48 object-cover rounded-md hover:shadow-lg" src={data.properties.galeri.foto1} alt="Gallery Image 1"/>
+            <img className="w-full h-48 object-cover rounded-md hover:shadow-lg" src={data.properties.galeri.foto2} alt="Gallery Image 2"/>
+            <img className="w-full h-48 object-cover rounded-md hover:shadow-lg" src={data.properties.galeri.foto3} alt="Gallery Image 3"/>
+          </div>
+        </section>
       </div>
     </div>
-  </section>
-</div>
-
   );
 };
 
