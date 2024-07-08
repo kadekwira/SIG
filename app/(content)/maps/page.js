@@ -88,7 +88,7 @@ const MapsPage = () => {
         (position) => {
       
           const { longitude, latitude } = position.coords;
-          setUserLocation([longitude, latitude]);
+          setUserLocation([115.170536, -8.624836]);
         },
         (error) => {
           console.error("Error obtaining location:", error);
@@ -229,6 +229,9 @@ const MapsPage = () => {
     if (searchParams.get("findNearest") === "true") {
       findNearestBeachesFromUserLocation(map);
     }
+    if (searchParams.get("all") === "true") {
+      findAll(map);
+    }
     if(searchParams.get("kecamatan")){
       const dataKecamatan = searchParams.get("kecamatan");
       findKecamatan(dataKecamatan,map)
@@ -236,6 +239,49 @@ const MapsPage = () => {
     return () => map.remove();
   }, [beachData, userLocation, searchParams]);
 
+
+  const findAll =(map)=>{
+    try {
+  
+      clearDestinationMarkers();
+  
+      beachData.forEach((beach) => {
+        const marker = new mapboxgl.Marker({
+          color: "#36BA98",
+        })
+          .setLngLat([
+            beach.geometry.coordinates._long,
+            beach.geometry.coordinates._lat,
+          ])
+          .addTo(map);
+  
+        marker.getElement().addEventListener("click", () => {
+          setSelectedPlace({
+            geometry: {
+              coordinates: {
+                "_long": beach.geometry.coordinates._long,
+                "_lat": beach.geometry.coordinates._lat
+              },
+            },
+            properties: {
+              id: beach.id,
+              name: beach.properties.name,
+              image: beach.properties.image_tumb,
+              rating: beach.properties.rating,
+              kecamatan: beach.properties.kecamatan,
+              alamat: beach.properties.alamat,
+            },
+          });
+        });
+  
+        destinationMarkerRefs.current.push(marker);
+      });
+  
+      setNearestBeaches(beachesInKecamatan);
+    } catch (error) {
+      console.error("Error adding markers:", error);
+    }
+  }
 
   const findKecamatan = (kecamatan, map) => {
     try {

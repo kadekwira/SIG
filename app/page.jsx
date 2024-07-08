@@ -73,22 +73,38 @@ const Hero = () => {
             )}
           </NavbarTwoColumns>
         </Section>
-
+      {user?( 
         <Section yPadding="pt-20 pb-32">
-          <HeroOneButton
-            title={
-              <>
-                {"Let&apos;s explore the beach tourism in Bali\n"}
-              </>
-            }
-            description="There are many beaches in Bali, what are you waiting for, let&apos;s explore them now!."
-            button={
-              <Link href="">
-                <button className='xl bg-blue-600 p-4'>Get Started</button>
-              </Link>
-            }
-          />
-        </Section>
+        <HeroOneButton
+          title={
+            <>
+              {"Selamat Datang "+user.displayName+" \n"}
+            </>
+          }
+          description="Ayo Mulai Pencarian Pantai di Kabupaten Badung!"
+          button={
+            <Link href="/maps">
+              <button className='xl bg-blue-600 p-4'>Maps</button>
+            </Link>
+          }
+        />
+      </Section>
+      ):(
+        <Section yPadding="pt-20 pb-32">
+        <HeroOneButton
+          title={
+            <>
+              {"JELAJAHI LOKASI WISATA PANTAI DI KABUPATEN BADUNG\n"}
+            </>
+          }
+          button={
+            <Link href="">
+              <button className='xl bg-blue-600 p-4'>Get Started</button>
+            </Link>
+          }
+        />
+      </Section>
+      )}
       </Background>
       <Modal show={showLoginModal} onClose={() => setShowLoginModal(false)}> 
           <LoginPage onClose={() => setShowLoginModal(false)}/>
@@ -99,8 +115,8 @@ const Hero = () => {
       <RegisterForm onClose={() => setShowRegisterModal(false)}/>
       </Modal>
       <VerticalFeatures />
-      <AboutUs />
-      <Banner />
+      {/* <AboutUs /> */}
+      <Banner user={user}/>
       <Footer />
     </>
   );

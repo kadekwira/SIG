@@ -18,7 +18,7 @@ const Sidebar = () => {
 
         try {
           const response = await geocodingClient.reverseGeocode({
-            query: [longitude, latitude],
+            query: [115.170536, -8.624836],
             limit: 1
           }).send();
           const place = response.body.features[0];
@@ -71,6 +71,11 @@ const Sidebar = () => {
           </div>
         )}
         <hr className="border-t border-gray-300 my-4" />
+        <div className="flex flex-col mt-4">
+          <a href="/maps?all=true" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            Cari Semua Pantai
+          </a>
+        </div>
         <div className="flex flex-col mt-4">
           <a href="/maps?findNearest=true" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
             Cari Lokasi Terdekat Anda

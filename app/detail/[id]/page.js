@@ -9,6 +9,23 @@ import { faLocationDot, faStar } from '@fortawesome/free-solid-svg-icons';
 const DetailPage = () => {
   const params = useParams();
   const [data, setData] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+
+  const handleImageClick = (index) => {
+    setSelectedIndex(index);
+  };
+
+  const closeModal = () => {
+    setSelectedIndex(null);
+  };
+
+  const showNextImage = () => {
+    setSelectedIndex((prevIndex) => (prevIndex + 1) % data.properties.galeri.length);
+  };
+
+  const showPreviousImage = () => {
+    setSelectedIndex((prevIndex) => (prevIndex - 1 + data.properties.galeri.length) % data.properties.galeri.length);
+  };
 
   const getDataById = async (id) => {
     try {
@@ -42,9 +59,11 @@ const DetailPage = () => {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
+  const selectedImage = selectedIndex !== null ? data.properties.galeri[selectedIndex] : null;
+
   return (
     <div className="container mx-auto p-5">
-      <nav className="bg-gray-600 shadow-md py-4 px-6 flex justify-between items-center w-full fixed top-0 left-0 right-0 z-10">
+      <nav className="bg-blue-600 shadow-md py-4 px-6 flex justify-between items-center w-full fixed top-0 left-0 right-0 z-10">
         <a className="text-2xl font-bold text-white" href="/">
          {data.properties.name}
         </a>
@@ -68,32 +87,145 @@ const DetailPage = () => {
         </div>
 
         <div className="mb-32">
-          <img className="h-96 w-full object-cover rounded-md" src={data.properties.image_tumb} alt={data.properties.name} />
+          <div className="flex justify-center">
+            <div className="w-1/3 h-1/3">
+              <img className="h-full w-full object-cover" src={data.properties.image_tumb} alt={data.properties.name} />
+            </div>
+          </div>
         </div>
 
         <section className='mb-32'>
-        <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Deskripsi & Fasilitas</h2>
-        <div className="flex flex-col md:flex-row mb-12 space-y-8 md:space-y-0 md:space-x-8">
-          <section className="flex-1 bg-white shadow-md rounded-lg overflow-hidden p-6">
-            <p className="text-gray-800 text-center">
-              {data.properties.deskripsi}
-            </p>
-          </section>
-
-          <section className="flex-1 bg-white shadow-md rounded-lg overflow-hidden p-6">
-            <div className="text-gray-800 text-center" dangerouslySetInnerHTML={{ __html: data.properties.fasilitas }} />
+        <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Deskripsi </h2>
+        <div className="flex flex-col space-y-8 md:space-y-0 md:space-x-8">
+          <section className="flex-1 bg-white  overflow-hidden p-6 text-gray-800 text-justify mx-20">
+            <div className="text-gray-800 " dangerouslySetInnerHTML={{ __html: data.properties.deskripsi }} />
           </section>
         </div>
         </section>
 
-        <section>
-          <h2 className="font-bold text-2xl text-center text-gray-800 mb-8">Galery</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <img className="w-full h-48 object-cover rounded-md hover:shadow-lg" src={data.properties.galeri.foto1} alt="Gallery Image 1"/>
-            <img className="w-full h-48 object-cover rounded-md hover:shadow-lg" src={data.properties.galeri.foto2} alt="Gallery Image 2"/>
-            <img className="w-full h-48 object-cover rounded-md hover:shadow-lg" src={data.properties.galeri.foto3} alt="Gallery Image 3"/>
+        <section className='mb-32'>
+          <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Fasilitas</h2>
+          <div className="flex flex-col space-y-8 md:space-y-0 md:flex-row md:space-x-8 justify-center">
+            <section className="flex-1 bg-white overflow-hidden p-6 text-gray-800 text-justify mx-20">
+              <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 p-4 ">
+              {data.properties.fasilitas.map((item, index) => (
+                  <div key={index} className="p-2 sm:w-1/2 w-full">
+                      <div className="bg-white rounded flex p-4 h-full items-center">
+                        <svg
+                          fill="none"
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={3}
+                          className="text-blue-600 w-6 h-6 flex-shrink-0 mr-4"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                          <path d="M22 4L12 14.01l-3-3" />
+                        </svg>
+                        <span className="font-medium">{item}</span>
+                      </div>
+                    </div>
+                  ))}
+
+              </div>
+            </section>
           </div>
         </section>
+
+
+        <section>
+      <h2 className="font-bold text-2xl text-center text-gray-800 mb-8">Galeri</h2>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 xl:gap-8 mx-20 mt-8">
+        {data.properties.galeri.map((item, index) => (
+          <a
+            key={index}
+            className="group relative flex h-48 items-end overflow-hidden bg-gray-100 shadow-lg md:h-80 cursor-pointer"
+            onClick={() => handleImageClick(index)}
+          >
+            <img
+              src={item.url}
+              loading="lazy"
+              alt={item.alt || "Gallery Image"}
+              className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 via-transparent to-transparent opacity-50"></div>
+          </a>
+        ))}
+      </div>
+
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg max-w-3xl w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+              onClick={closeModal}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <img
+              src={selectedImage.url}
+              alt={selectedImage.alt || "Detail Image"}
+              className="w-full h-auto object-cover"
+            />
+            {selectedImage.alt && (
+              <p className="mt-2 text-center text-gray-700">{selectedImage.alt}</p>
+            )}
+            <button
+              className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+              onClick={showPreviousImage}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <button
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+              onClick={showNextImage}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
       </div>
     </div>
   );
