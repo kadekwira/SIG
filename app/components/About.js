@@ -61,7 +61,7 @@ const AboutUs = () => {
         description="Maps are essential tools for navigation, understanding geography, and analyzing spatial information. They provide a visual representation of the world around us and can be used for a variety of purposes, from planning trips to tracking environmental changes."
       >
         <p>
-          Maps have been used for centuries to help people navigate and make sense of the world. They can range from simple hand-drawn sketches to complex digital representations. In today's digital age, maps are more accessible than ever, thanks to technologies like GPS and online mapping services.
+          Maps have been used for centuries to help people navigate and make sense of the world. They can range from simple hand-drawn sketches to complex digital representations. In today digital age, maps are more accessible than ever, thanks to technologies like GPS and online mapping services.
         </p>
       </Section>
     </>
