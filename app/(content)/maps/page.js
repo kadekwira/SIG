@@ -436,62 +436,64 @@ const MapsPage = () => {
         id="map"
         style={{ height: "100%", width: "100%" }}
       >
-         
-        {selectedPlace && (
-          <div className="absolute bottom-5 left-5 w-72 h-80 bg-white p-5 shadow-lg z-10 rounded-lg text-black">
-            <button
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold"
-              onClick={handleOnClose}
-            >
-              X
-            </button>
-            {selectedPlace.properties.image && (
-              <img
-                src={selectedPlace.properties.image}
-                alt={selectedPlace.properties.name}
-                className="w-full h-32 object-cover mb-2 rounded-lg"
-              />
-            )}
-            <p className="font-bold">{selectedPlace.properties.name}</p>
-            {selectedPlace.properties.rating && (
-              <p>Rating: {selectedPlace.properties.rating}</p>
-            )}
-            {selectedPlace.properties.kecamatan && (
-              <p>Kecamatan: {selectedPlace.properties.kecamatan}</p>
-            )}
-                {weather && (
-                  <div className="flex items-center mt-1">
-                    <img
-                      src={weather.icon}
-                      alt={weather.icon}
-                      className="w-5 h-5 mr-2"
-                    />
-                    <p> {weather.description} ({weather.degree}°C)</p>
-                </div>
-                )}
-            <div className="flex justify-between mt-4">
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg w-32 m-2"
-                onClick={() =>
-                  handleDetailClick(selectedPlace.properties.id)
-                }
-              >
-                Detail
-              </button>
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded-lg w-32 m-2"
-                onClick={() =>
-                  handleRouteClick([
-                    selectedPlace.geometry.coordinates._long,
-                    selectedPlace.geometry.coordinates._lat,
-                  ])
-                }
-              >
-                Rute
-              </button>
-            </div>
-          </div>
-        )}
+{selectedPlace && (
+  <div className="absolute bottom-5 left-5 w-56 max-h-72 bg-white p-3 shadow-lg z-10 rounded-lg text-black md:w-72 md:max-h-auto md:p-5">
+    <button
+      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold"
+      onClick={handleOnClose}
+    >
+      X
+    </button>
+    {selectedPlace.properties.image && (
+      <img
+        src={selectedPlace.properties.image}
+        alt={selectedPlace.properties.name}
+        className="w-full h-24 object-cover mb-2 rounded-lg"
+      />
+    )}
+    <p className="font-bold text-xs md:text-base">{selectedPlace.properties.name}</p>
+    {selectedPlace.properties.rating && (
+      <p className="text-xs md:text-base">Rating: {selectedPlace.properties.rating}</p>
+    )}
+    {selectedPlace.properties.kecamatan && (
+      <p className="text-xs md:text-base">Kecamatan: {selectedPlace.properties.kecamatan}</p>
+    )}
+    {weather && (
+      <div className="flex items-center mt-1">
+        <img
+          src={weather.icon}
+          alt="weather-icon"
+          className="w-4 h-4 mr-2"
+        />
+        <p className="text-xs md:text-base">{weather.description} ({weather.degree}°C)</p>
+      </div>
+    )}
+    <div className="flex flex-col md:flex-row justify-between mt-4">
+      <button
+        className="bg-blue-500 text-white px-2 py-1 rounded-lg w-full md:w-28 m-1 md:m-2 text-xs md:text-base"
+        onClick={() =>
+          handleDetailClick(selectedPlace.properties.id)
+        }
+      >
+        Detail
+      </button>
+      <button
+        className="bg-green-500 text-white px-2 py-1 rounded-lg w-full md:w-28 m-1 md:m-2 text-xs md:text-base"
+        onClick={() =>
+          handleRouteClick([
+            selectedPlace.geometry.coordinates._long,
+            selectedPlace.geometry.coordinates._lat,
+          ])
+        }
+      >
+        Rute
+      </button>
+    </div>
+  </div>
+)}
+
+
+
         <RouteCard route={route} onClose={() => setRoute(null)} />
       </div>
     </div>

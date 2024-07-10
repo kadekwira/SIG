@@ -5,10 +5,10 @@ import Sidebar from "./components/Aside";
 export default function MapsLayout({ children }) {
   return (
     <AuthProvider>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <Sidebar />
         <div className="flex-grow">
-          <div className="">{children}</div>
+          <div className="mt-24 md:mt-0">{children}</div>
         </div>
       </div>
     </AuthProvider>
