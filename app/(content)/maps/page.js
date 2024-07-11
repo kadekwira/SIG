@@ -226,6 +226,7 @@ const MapsPage = () => {
     setDirections(directionsInstance);
     map.addControl(directionsInstance, "top-left");
 
+
     if (searchParams.get("findNearest") === "true") {
       findNearestBeachesFromUserLocation(map);
     }
@@ -432,12 +433,11 @@ const MapsPage = () => {
   return (
     <div className="flex flex-col h-screen">
       <div
-        className="flex-grow relative"
+        className="flex-grow relative "
         id="map"
-        style={{ height: "100%", width: "100%" }}
       >
 {selectedPlace && (
-  <div className="absolute bottom-5 left-5 w-56 max-h-72 bg-white p-3 shadow-lg z-10 rounded-lg text-black md:w-72 md:max-h-auto md:p-5">
+  <div className="absolute bottom-5 left-5 w-56 max-h-fit bg-white p-3 shadow-lg z-10 rounded-lg text-black md:w-72 md:max-h-auto md:p-5">
     <button
       className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold"
       onClick={handleOnClose}
@@ -451,12 +451,12 @@ const MapsPage = () => {
         className="w-full h-24 object-cover mb-2 rounded-lg"
       />
     )}
-    <p className="font-bold text-xs md:text-base">{selectedPlace.properties.name}</p>
+    <p className="font-bold text-sm md:text-xs">{selectedPlace.properties.name}</p>
     {selectedPlace.properties.rating && (
-      <p className="text-xs md:text-base">Rating: {selectedPlace.properties.rating}</p>
+      <p className="text-sm md:text-xs">Rating: {selectedPlace.properties.rating}</p>
     )}
     {selectedPlace.properties.kecamatan && (
-      <p className="text-xs md:text-base">Kecamatan: {selectedPlace.properties.kecamatan}</p>
+      <p className="text-sm md:text-xs">Kecamatan: {selectedPlace.properties.kecamatan}</p>
     )}
     {weather && (
       <div className="flex items-center mt-1">
@@ -465,12 +465,12 @@ const MapsPage = () => {
           alt="weather-icon"
           className="w-4 h-4 mr-2"
         />
-        <p className="text-xs md:text-base">{weather.description} ({weather.degree}°C)</p>
+        <p className="text-sm md:text-xs">{weather.description} ({weather.degree}°C)</p>
       </div>
     )}
     <div className="flex flex-col md:flex-row justify-between mt-4">
       <button
-        className="bg-blue-500 text-white px-2 py-1 rounded-lg w-full md:w-28 m-1 md:m-2 text-xs md:text-base"
+        className="bg-blue-500 text-white px-2 py-2 rounded-lg w-full md:w-28 m-1 md:m-2 "
         onClick={() =>
           handleDetailClick(selectedPlace.properties.id)
         }
@@ -478,7 +478,7 @@ const MapsPage = () => {
         Detail
       </button>
       <button
-        className="bg-green-500 text-white px-2 py-1 rounded-lg w-full md:w-28 m-1 md:m-2 text-xs md:text-base"
+        className="bg-green-500 text-white px-2 py-2 rounded-lg w-full md:w-28 m-1 md:m-2 "
         onClick={() =>
           handleRouteClick([
             selectedPlace.geometry.coordinates._long,

@@ -1,13 +1,17 @@
 "use client";
-import { useParams } from 'next/navigation';
+import { useParams,useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { firestore } from '../../config/firebase_config';
 import { doc, getDoc } from "firebase/firestore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faStar } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from "../../helper/auth_context";
+import Swal from 'sweetalert2';
 
 const DetailPage = () => {
   const params = useParams();
+  const router = useRouter();
+  const { user, loading } = useAuth();
   const [data, setData] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -43,6 +47,27 @@ const DetailPage = () => {
       return null;
     }
   };
+
+  useEffect(() => {
+    if (!loading && !user) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Belum Login',
+        text: 'Pastikan Anda Login',
+        confirmButtonText: 'oke'
+      });
+      router.push('/');
+    }
+  }, [ loading, user, router]);
+
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return null; 
+  }
 
   useEffect(() => {
     if (params.id) {
@@ -153,15 +178,15 @@ const DetailPage = () => {
           </div>
 
           {selectedImage && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-3">
               <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative">
                 <button
-                  className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                  className="absolute top-5 right-5  bg-red-600 text-white p-1 rounded-full"
                   onClick={closeModal}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
+                    className="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

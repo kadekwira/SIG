@@ -20,7 +20,7 @@ const Sidebar = () => {
 
         try {
           const response = await geocodingClient.reverseGeocode({
-            query: [longitude, latitude],
+            query: [115.170536, -8.624836],
             limit: 1
           }).send();
           const place = response.body.features[0];
@@ -57,7 +57,7 @@ const Sidebar = () => {
     <div className="flex flex-col md:h-screen h-fit">
       <div className="md:hidden bg-gray-600 p-4 fixed top-0 left-0 right-0 z-50">
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-white">
-          <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} size="2x" />
+          <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} size="x" />
         </button>
       </div>
       <div className={`bg-gray-600 w-full md:w-64 p-4 flex flex-col transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative fixed top-0 left-0 transition-transform duration-300 ease-in-out z-40 h-screen`}>

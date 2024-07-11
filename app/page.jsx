@@ -9,7 +9,6 @@ import { Section } from './layouts/Section';
 import { NavbarTwoColumns } from './components/Navbar';
 import { Logo } from './components/Logo';
 import { VerticalFeatures } from './components/VerticalFeature';
-import AboutUs from './components/About';
 import { Banner } from './components/banner/Banner';
 import { Footer } from './components/Footer';
 import Modal from './components/Modal';
@@ -84,7 +83,7 @@ const Hero = () => {
           description="Ayo Mulai Pencarian Pantai di Kabupaten Badung!"
           button={
             <Link href="/maps">
-              <button className='xl bg-blue-600 p-4'>Maps</button>
+              <button className='xl bg-blue-600 p-4 text-white'>Mulai</button>
             </Link>
           }
         />
@@ -99,7 +98,7 @@ const Hero = () => {
           }
           button={
             <Link href="">
-              <button className='xl bg-blue-600 p-4'>Get Started</button>
+              <button className='xl bg-blue-600 p-4 text-white'>Mulai</button>
             </Link>
           }
         />
