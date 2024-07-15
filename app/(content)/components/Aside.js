@@ -6,12 +6,39 @@ import mbxGeocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocationDot, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import Swal from 'sweetalert2';
+import { useAuth } from '../../helper/auth_context';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'
 
 const Sidebar = () => {
   const [city, setCity] = useState('Loading...');
   const [weather, setWeather] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const geocodingClient = mbxGeocoding({ accessToken: process.env.NEXT_PUBLIC_MAPS_TOKEN });
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Logout',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Logout',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        Swal.fire("Logout Successfully!", "", "success");
+        router.push('/');
+        await logout();
+      }
+    } catch (error) {
+      console.error('Failed to logout', error);
+    }
+  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -108,6 +135,9 @@ const Sidebar = () => {
             <a href="/maps?kecamatan=petang" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
               Petang
             </a>
+            <Link href="" onClick={handleLogout} className="w-full bg-red-500 text-white py-2 px-4 rounded text-center">
+                    Logout
+            </Link>
           </div>
         </div>
       </div>

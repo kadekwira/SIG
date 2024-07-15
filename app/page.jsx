@@ -97,9 +97,7 @@ const Hero = () => {
             </>
           }
           button={
-            <Link href="">
-              <button className='xl bg-blue-600 p-4 text-white'>Mulai</button>
-            </Link>
+            <button onClick={() => setShowLoginModal(true)} className='xl bg-blue-600 p-4 text-white'>Mulai</button>
           }
         />
       </Section>
