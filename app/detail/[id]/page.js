@@ -24,11 +24,11 @@ const DetailPage = () => {
   };
 
   const showNextImage = () => {
-    setSelectedIndex((prevIndex) => (prevIndex + 1) % data.properties.galeri.length);
+    setSelectedIndex((prevIndex) => (prevIndex + 1) % data?.properties?.galeri?.length);
   };
 
   const showPreviousImage = () => {
-    setSelectedIndex((prevIndex) => (prevIndex - 1 + data.properties.galeri.length) % data.properties.galeri.length);
+    setSelectedIndex((prevIndex) => (prevIndex - 1 + data?.properties?.galeri?.length) % data?.properties?.galeri?.length);
   };
 
   const getDataById = async (id) => {
@@ -76,7 +76,7 @@ const DetailPage = () => {
   }
 
   if (!user) {
-    return null; 
+    return null;
   }
 
   if (!data) {
@@ -89,7 +89,7 @@ const DetailPage = () => {
     <div className="container mx-auto p-5">
       <nav className="bg-blue-600 shadow-md py-4 px-6 flex justify-between items-center w-full fixed top-0 left-0 right-0 z-10">
         <a className="text-2xl font-bold text-white" href="/">
-         {data.properties.name}
+          {data.properties.name}
         </a>
         <div className="flex space-x-4">
           <a href="/" className="text-white hover:text-gray-800">Home</a>
@@ -126,7 +126,7 @@ const DetailPage = () => {
             </section>
           </div>
         </section>
-        
+
         <section className='mb-32'>
           <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Fasilitas</h2>
           <div className="flex flex-col space-y-8 md:space-y-0 md:flex-row md:space-x-8 justify-center">
@@ -147,7 +147,7 @@ const DetailPage = () => {
                         <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                         <path d="M22 4L12 14.01l-3-3" />
                       </svg>
-                      <span className="font-medium text-sm md:text-base">{item}</span> 
+                      <span className="font-medium text-sm md:text-base">{item}</span>
                     </div>
                   </div>
                 ))}
@@ -180,7 +180,7 @@ const DetailPage = () => {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-3">
               <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative">
                 <button
-                  className="absolute top-5 right-5  bg-red-600 text-white p-1 rounded-full"
+                  className="absolute top-5 right-5 bg-red-600 text-white p-1 rounded-full"
                   onClick={closeModal}
                 >
                   <svg
