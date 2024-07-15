@@ -1,5 +1,5 @@
 "use client";
-import { useParams,useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { firestore } from '../../config/firebase_config';
 import { doc, getDoc } from "firebase/firestore";
@@ -58,16 +58,7 @@ const DetailPage = () => {
       });
       router.push('/');
     }
-  }, [ loading, user, router]);
-
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return null; 
-  }
+  }, [loading, user, router]);
 
   useEffect(() => {
     if (params.id) {
@@ -79,6 +70,14 @@ const DetailPage = () => {
       fetchData();
     }
   }, [params.id]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return null; 
+  }
 
   if (!data) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
@@ -127,35 +126,35 @@ const DetailPage = () => {
             </section>
           </div>
         </section>
+        
         <section className='mb-32'>
-  <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Fasilitas</h2>
-  <div className="flex flex-col space-y-8 md:space-y-0 md:flex-row md:space-x-8 justify-center">
-    <section className="flex-1 bg-white overflow-hidden p-6 text-gray-800 text-justify mx-4 md:mx-20"> {/* Adjusted mx-4 for mobile */}
-      <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 p-4">
-        {data.properties.fasilitas.map((item, index) => (
-          <div key={index} className="p-2 sm:w-1/2 w-full">
-            <div className="bg-white rounded flex p-4 h-full items-center">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={3}
-                className="text-blue-600 w-6 h-6 flex-shrink-0 mr-4 md:mr-6"
-                viewBox="0 0 24 24"
-              >
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                <path d="M22 4L12 14.01l-3-3" />
-              </svg>
-              <span className="font-medium text-sm md:text-base">{item}</span> 
-            </div>
+          <h2 className="font-bold text-2xl text-center text-gray-800 mb-10">Fasilitas</h2>
+          <div className="flex flex-col space-y-8 md:space-y-0 md:flex-row md:space-x-8 justify-center">
+            <section className="flex-1 bg-white overflow-hidden p-6 text-gray-800 text-justify mx-4 md:mx-20">
+              <div className="flex flex-wrap lg:w-4/5 sm:mx-auto sm:mb-2 -mx-2 p-4">
+                {data.properties.fasilitas.map((item, index) => (
+                  <div key={index} className="p-2 sm:w-1/2 w-full">
+                    <div className="bg-white rounded flex p-4 h-full items-center">
+                      <svg
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        className="text-blue-600 w-6 h-6 flex-shrink-0 mr-4 md:mr-6"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                        <path d="M22 4L12 14.01l-3-3" />
+                      </svg>
+                      <span className="font-medium text-sm md:text-base">{item}</span> 
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
-        ))}
-      </div>
-    </section>
-  </div>
-</section>
-
+        </section>
 
         <section>
           <h2 className="font-bold text-xl md:text-2xl text-center text-gray-800 mb-4 md:mb-8">Galeri</h2>
