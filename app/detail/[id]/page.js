@@ -59,6 +59,7 @@ const DetailPage = () => {
     }
   }, [params.id]);
 
+
   useEffect(() => {
     if (!loading && !user) {
       Swal.fire({
@@ -86,6 +87,7 @@ const DetailPage = () => {
 
   const selectedImage = selectedIndex !== null ? data.properties.galeri[selectedIndex] : null;
 
+  console.log(data)
   return (
     <div className="container mx-auto p-5">
       <nav className="bg-blue-600 shadow-md py-4 px-6 flex justify-between items-center w-full fixed top-0 left-0 right-0 z-10">
@@ -160,7 +162,7 @@ const DetailPage = () => {
         <section>
           <h2 className="font-bold text-xl md:text-2xl text-center text-gray-800 mb-4 md:mb-8">Galeri</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 md:gap-6 xl:gap-8 mx-2 md:mx-20 mt-4">
-            {data.properties.galeri.map((item, index) => (
+            {data.properties.galery.map((item, index) => (
               <a
                 key={index}
                 className="group relative flex h-36 sm:h-48 md:h-64 items-end overflow-hidden bg-gray-100 shadow-lg cursor-pointer"
