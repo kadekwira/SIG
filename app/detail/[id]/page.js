@@ -49,6 +49,17 @@ const DetailPage = () => {
   };
 
   useEffect(() => {
+    if (params.id) {
+      const fetchData = async () => {
+        const data = await getDataById(params.id);
+        setData(data);
+      };
+
+      fetchData();
+    }
+  }, [params.id]);
+
+  useEffect(() => {
     if (!loading && !user) {
       Swal.fire({
         icon: 'error',
@@ -60,16 +71,6 @@ const DetailPage = () => {
     }
   }, [loading, user, router]);
 
-  useEffect(() => {
-    if (params.id) {
-      const fetchData = async () => {
-        const data = await getDataById(params.id);
-        setData(data);
-      };
-
-      fetchData();
-    }
-  }, [params.id]);
 
   if (loading) {
     return <div>Loading...</div>;
