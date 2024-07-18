@@ -24,11 +24,11 @@ const DetailPage = () => {
   };
 
   const showNextImage = () => {
-    setSelectedIndex((prevIndex) => (prevIndex + 1) % data?.properties?.galeri?.length);
+    setSelectedIndex((prevIndex) => (prevIndex + 1) % data?.properties?.galery?.length);
   };
 
   const showPreviousImage = () => {
-    setSelectedIndex((prevIndex) => (prevIndex - 1 + data?.properties?.galeri?.length) % data?.properties?.galeri?.length);
+    setSelectedIndex((prevIndex) => (prevIndex - 1 + data?.properties?.galery?.length) % data?.properties?.galery?.length);
   };
 
   const getDataById = async (id) => {
@@ -85,9 +85,7 @@ const DetailPage = () => {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  const selectedImage = selectedIndex !== null ? data.properties.galeri[selectedIndex] : null;
-
-  console.log(data)
+  const selectedImage = selectedIndex !== null ? data.properties.galery[selectedIndex] : null;
   return (
     <div className="container mx-auto p-5">
       <nav className="bg-blue-600 shadow-md py-4 px-6 flex justify-between items-center w-full fixed top-0 left-0 right-0 z-10">
@@ -181,7 +179,7 @@ const DetailPage = () => {
 
           {selectedImage && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-3">
-              <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative">
+              <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative h-5/6" >
                 <button
                   className="absolute top-5 right-5 bg-red-600 text-white p-1 rounded-full"
                   onClick={closeModal}
@@ -204,7 +202,7 @@ const DetailPage = () => {
                 <img
                   src={selectedImage.url}
                   alt={selectedImage.alt || "Detail Image"}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-full object-cover"
                 />
                 {selectedImage.alt && (
                   <p className="mt-2 text-center text-gray-700">{selectedImage.alt}</p>
