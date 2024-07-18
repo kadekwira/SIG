@@ -179,7 +179,7 @@ const DetailPage = () => {
 
           {selectedImage && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-3">
-              <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative h-3/6" >
+              <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative md:h-4/6 h-3/6" >
                 <button
                   className="absolute top-5 right-5 bg-red-600 text-white p-1 rounded-full"
                   onClick={closeModal}
