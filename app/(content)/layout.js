@@ -31,9 +31,9 @@ export default function MapsLayout({ children }) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row md:overflow-y-auto overflow-y-hidden">
       <Sidebar />
-      <div className="flex-grow">
+      <div className="flex-grow ">
         <div className="mt-16 md:mt-0">{children}</div>
       </div>
     </div>

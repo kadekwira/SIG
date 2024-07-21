@@ -1,4 +1,5 @@
 import { AppConfig } from '../utils/AppConfig';
+import Link from 'next/link';
 
 const Logo = (props) => {
   const size = props.xl ? '44' : '32';
@@ -7,6 +8,7 @@ const Logo = (props) => {
     : 'font-semibold text-xl';
 
   return (
+    <Link href="/">
     <span className={`inline-flex items-center ${fontStyle}`}>
       <img
         className="mr-1"
@@ -17,6 +19,7 @@ const Logo = (props) => {
       />
       {AppConfig.site_name}
     </span>
+    </Link>
   );
 };
 

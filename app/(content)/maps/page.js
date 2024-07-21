@@ -58,7 +58,6 @@ const MapsPage = () => {
         const cityName = locality ? locality.text : 'Unknown Location';
         setCity(cityName);
 
-        // Fetch weather data
         if (cityName !== 'Unknown Location') {
           try {
             const weatherResponse = await axios.get(`https://api.collectapi.com/weather/getWeather?data.lang=id&data.city=${cityName}`, {
@@ -88,7 +87,8 @@ const MapsPage = () => {
         (position) => {
       
           const { longitude, latitude } = position.coords;
-          setUserLocation([115.170536, -8.624836]);
+          // setUserLocation([115.170536, -8.624836]);
+          setUserLocation([longitude, latitude]);
         },
         (error) => {
           console.error("Error obtaining location:", error);
@@ -187,7 +187,17 @@ const MapsPage = () => {
             features.geometry.coordinates._lat,
           ])
           .addTo(map);
-        destinationMarkerRefs.current.push(destinationMarker);
+          destinationMarker.getElement().style.cursor = 'pointer'; 
+
+          destinationMarker.getElement().addEventListener('mouseenter', () => {
+            destinationMarker.getElement().style.cursor = 'pointer';
+          });
+      
+          destinationMarker.getElement().addEventListener('mouseleave', () => {
+            destinationMarker.getElement().style.cursor = '';
+          });
+      
+          destinationMarkerRefs.current.push(destinationMarker);
 
         if (userLocation && directions) {
           directions.setOrigin(userLocation);
@@ -256,6 +266,14 @@ const MapsPage = () => {
           ])
           .addTo(map);
   
+          marker.getElement().style.cursor = 'pointer';
+          marker.getElement().addEventListener('mouseenter', () => {
+            marker.getElement().style.cursor = 'pointer';
+          });
+    
+          marker.getElement().addEventListener('mouseleave', () => {
+            marker.getElement().style.cursor = '';
+          });
         marker.getElement().addEventListener("click", () => {
           setSelectedPlace({
             geometry: {
@@ -278,7 +296,7 @@ const MapsPage = () => {
         destinationMarkerRefs.current.push(marker);
       });
   
-      setNearestBeaches(beachesInKecamatan);
+      setNearestBeaches(beachData);
     } catch (error) {
       console.error("Error adding markers:", error);
     }
@@ -301,7 +319,14 @@ const MapsPage = () => {
             beach.geometry.coordinates._lat,
           ])
           .addTo(map);
-  
+          marker.getElement().style.cursor = 'pointer';
+          marker.getElement().addEventListener('mouseenter', () => {
+            marker.getElement().style.cursor = 'pointer';
+          });
+    
+          marker.getElement().addEventListener('mouseleave', () => {
+            marker.getElement().style.cursor = '';
+          });
         marker.getElement().addEventListener("click", () => {
           setSelectedPlace({
             geometry: {
@@ -353,7 +378,14 @@ const MapsPage = () => {
             beach.geometry.coordinates._lat,
           ])
           .addTo(map);
-
+          marker.getElement().style.cursor = 'pointer';
+          marker.getElement().addEventListener('mouseenter', () => {
+            marker.getElement().style.cursor = 'pointer';
+          });
+    
+          marker.getElement().addEventListener('mouseleave', () => {
+            marker.getElement().style.cursor = '';
+          });
         marker.getElement().addEventListener("click", () => {
           setSelectedPlace({
             geometry: {
@@ -372,7 +404,7 @@ const MapsPage = () => {
             },
           });
         });
-
+    
         destinationMarkerRefs.current.push(marker);
       });
 
@@ -431,7 +463,7 @@ const MapsPage = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col md:h-screen h-fit">
       <div
         className="flex-grow relative "
         id="map"
@@ -439,7 +471,7 @@ const MapsPage = () => {
 {selectedPlace && (
   <div className="absolute bottom-5 left-5 w-56 max-h-fit bg-white p-3 shadow-lg z-10 rounded-lg text-black md:w-72 md:max-h-auto md:p-5">
     <button
-      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold"
+      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 transition-all duration-300  text-white rounded-full w-6 h-6 flex items-center justify-center font-bold"
       onClick={handleOnClose}
     >
       X
@@ -470,7 +502,7 @@ const MapsPage = () => {
     )}
     <div className="flex flex-col md:flex-row justify-between mt-4">
       <button
-        className="bg-blue-500 text-white px-2 py-2 rounded-lg w-full md:w-28 m-1 md:m-2 "
+        className="bg-blue-500 text-white px-2 py-2 rounded-lg w-full md:w-28 m-1 md:m-2 hover:bg-blue-700 transition-all duration-300"
         onClick={() =>
           handleDetailClick(selectedPlace.properties.id)
         }
@@ -478,7 +510,7 @@ const MapsPage = () => {
         Detail
       </button>
       <button
-        className="bg-green-500 text-white px-2 py-2 rounded-lg w-full md:w-28 m-1 md:m-2 "
+        className="bg-green-500 text-white px-2 py-2 rounded-lg w-full md:w-28 m-1 md:m-2 hover:bg-green-600 transition-all duration-300"
         onClick={() =>
           handleRouteClick([
             selectedPlace.geometry.coordinates._long,

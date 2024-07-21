@@ -15,16 +15,16 @@ const LoginPage = ({ onClose }) => {
       await signInWithPopup(auth, provider);
       Swal.fire({
         icon: 'success',
-        title: 'Login Successful',
-        text: 'You can login right now!',
+        title: 'Login Berhasil',
+        text: 'Anda Sudah berhasil melakukan login',
         confirmButtonText: 'Oke'
       });
-      router.push('/');
+      router.push('/maps');
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Login Failed',
-        text: 'Failed to login!',
+        title: 'Login Gagal',
+        text: 'Anda gagal melakukan login!',
         confirmButtonText: 'oke'
       });
       console.error(error);
@@ -60,7 +60,7 @@ const LoginPage = ({ onClose }) => {
           onClick={handleGoogleSignIn}
           className="mt-2 w-full rounded-lg bg-[#4285F4] px-4 py-2 font-bold text-white hover:bg-[#1967D2] focus:outline-none focus:ring-2 focus:ring-[#4285F4]"
         >
-          <i className="fab fa-google mr-2"></i> Sign in with Google
+          <i className="fab fa-google mr-2"></i> Daftar dengan Google
         </button>
         {error && <p className="mt-4 text-red-500">{error}</p>}
       </div>

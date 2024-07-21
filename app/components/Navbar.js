@@ -12,7 +12,11 @@ const NavbarTwoColumns = (props) => {
   return (
     <div className="flex flex-wrap items-center justify-between p-4 ">
       <div className="flex-shrink-0">
-        <Link href="/">{props.logo}</Link>
+        {typeof props.logo === 'string' ? (
+          <Link href="/">{props.logo}</Link>
+        ) : (
+          props.logo
+        )}
       </div>
       <div className="block md:hidden">
         <button

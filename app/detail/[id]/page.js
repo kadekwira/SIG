@@ -93,8 +93,8 @@ const DetailPage = () => {
           {data.properties.name}
         </a>
         <div className="flex space-x-4">
-          <a href="/" className="text-white hover:text-gray-800">Home</a>
-          <a href="/maps" className="text-white hover:text-gray-800">Maps</a>
+          <a href="/" className="text-white hover:text-gray-200">Home</a>
+          <a href="/maps" className="text-white hover:text-gray-200">Maps</a>
         </div>
       </nav>
 
@@ -106,15 +106,15 @@ const DetailPage = () => {
             {data.properties.alamat}
           </p>
           <p className="text-gray-800 flex justify-center items-center">
-            <FontAwesomeIcon icon={faStar} className="text-yellow-500 text-lg md:text-xl mr-1 md:mr-2"/>
+            <FontAwesomeIcon icon={faStar} className="text-yellow-300 text-lg md:text-xl mr-1 md:mr-2"/>
             {data.properties.rating}
           </p>
         </div>
 
         <div className="mb-8 md:mb-32">
-          <div className="flex justify-center">
-            <div className="w-full md:w-1/3">
-              <img className="h-48 md:h-full w-full object-cover" src={data.properties.image_tumb} alt={data.properties.name} />
+          <div className="flex justify-center md:px-24 px-6">
+            <div className="w-full">
+              <img className=" md-full w-full object-cover" src={data.properties.image_tumb} alt={data.properties.name} />
             </div>
           </div>
         </div>
@@ -179,9 +179,9 @@ const DetailPage = () => {
 
           {selectedImage && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-3">
-              <div className="bg-white p-2 md:p-4 rounded-lg max-w-full md:max-w-3xl w-full relative md:h-4/6 h-3/6" >
+              <div className="bg-white p-2 pb-8 md:p-4 md:pb-10 rounded-lg max-w-full md:max-w-3xl w-full relative md:h-4/6 h-3/6" >
                 <button
-                  className="absolute top-5 right-5 bg-red-600 text-white p-1 rounded-full"
+                  className="absolute top-5 right-5 bg-red-600 hover:bg-red-700 transition-all duration-300 text-white p-1 rounded-full"
                   onClick={closeModal}
                 >
                   <svg
@@ -205,10 +205,10 @@ const DetailPage = () => {
                   className="w-full h-full object-cover"
                 />
                 {selectedImage.alt && (
-                  <p className="mt-2 text-center text-gray-700">{selectedImage.alt}</p>
+                  <p className="mt-2 text-center text-gray-700 md:text-sm text-xs h-fit">{selectedImage.alt}</p>
                 )}
                 <button
-                  className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                  className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 hover:bg-gray-900 transition-all duration-300 text-white p-2 rounded-full"
                   onClick={showPreviousImage}
                 >
                   <svg
@@ -227,7 +227,7 @@ const DetailPage = () => {
                   </svg>
                 </button>
                 <button
-                  className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                  className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800  hover:bg-gray-900 transition-all duration-300 text-white p-2 rounded-full"
                   onClick={showNextImage}
                 >
                   <svg

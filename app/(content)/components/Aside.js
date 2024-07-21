@@ -9,7 +9,8 @@ import { faLocationDot, faBars, faTimes } from '@fortawesome/free-solid-svg-icon
 import Swal from 'sweetalert2';
 import { useAuth } from '../../helper/auth_context';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'
+import { useRouter,useSearchParams } from 'next/navigation'
+import "../../direction.css";
 
 const Sidebar = () => {
   const [city, setCity] = useState('Loading...');
@@ -17,21 +18,29 @@ const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const geocodingClient = mbxGeocoding({ accessToken: process.env.NEXT_PUBLIC_MAPS_TOKEN });
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, logout } = useAuth();
+
+  const [activeButton, setActiveButton] = useState(null);
 
   const handleLogout = async () => {
     try {
       const result = await Swal.fire({
-        title: 'Logout',
-        text: 'Are you sure you want to logout?',
+        title: 'Keluar',
+        text: 'Apakah Anda Yakin Akan Keluar?',
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'Logout',
-        cancelButtonText: 'Cancel'
+        confirmButtonText: 'Keluar',
+        cancelButtonText: 'Batal',
+        customClass: {
+          confirmButton: 'btn-confirm',
+          cancelButton: 'btn-cancel'
+        },
+        buttonsStyling: false
       });
 
       if (result.isConfirmed) {
-        Swal.fire("Logout Successfully!", "", "success");
+        Swal.fire("Anda Berhasil Keluar!", "", "success");
         router.push('/');
         await logout();
       }
@@ -47,11 +56,11 @@ const Sidebar = () => {
 
         try {
           const response = await geocodingClient.reverseGeocode({
-            query: [115.170536, -8.624836],
+            query: [longitude,latitude],
             limit: 1
           }).send();
           const place = response.body.features[0];
-          const locality = place.context.find(c => c.id.includes('neighborhood'));
+          const locality = place.context.find(c => c.id.includes('place'));
           const cityName = locality ? locality.text : 'Unknown Location';
           setCity(cityName);
 
@@ -78,7 +87,26 @@ const Sidebar = () => {
     } else {
       setCity('Geolocation not supported');
     }
-  }, []);
+
+    const updateActiveButton = () => {
+      const all = searchParams.get('all');
+      const findNearest = searchParams.get('findNearest');
+      const kecamatan = searchParams.get('kecamatan');
+
+
+      if (all) {
+        setActiveButton('all');
+      } else if (findNearest) {
+        setActiveButton('findNearest');
+      } else if (kecamatan) {
+        setActiveButton(kecamatan);
+      } else {
+        setActiveButton(null);
+      }
+    };
+
+    updateActiveButton();
+  }, [searchParams]);
 
   return (
     <div className="flex flex-col md:h-screen h-fit">
@@ -107,36 +135,37 @@ const Sidebar = () => {
           )}
           <hr className="border-t border-gray-300 my-4" />
           <div className="flex flex-col mt-4">
-            <a href="/maps?all=true" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            <Link href="/maps?all=true" 
+            className={`mt-2 text-center w-full px-2 py-2 rounded-lg bg-[#4285F4]  text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none  ${activeButton === 'all' ? 'bg-blue-700 ' : 'bg-[#4285F4]'}`}>
               Cari Semua Pantai
-            </a>
+            </Link>
           </div>
-          <div className="flex flex-col mt-4">
-            <a href="/maps?findNearest=true" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+          <div className="flex flex-col mt-3">
+            <Link href="/maps?findNearest=true" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none  ${activeButton === 'findNearest' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Cari Lokasi Terdekat Anda
-            </a>
+            </Link>
           </div>
-          <div className="flex flex-col mt-4 gap-3">
-            <a href="/maps?kecamatan=kuta utara" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+          <div className="flex flex-col mt-3 gap-3">
+            <Link href="/maps?kecamatan=kuta utara" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none  ${activeButton === 'kuta utara' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Kuta Utara
-            </a>
-            <a href="/maps?kecamatan=kuta" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            </Link>
+            <Link href="/maps?kecamatan=kuta" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none  ${activeButton === 'kuta' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Kuta 
-            </a>
-            <a href="/maps?kecamatan=kuta selatan" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            </Link>
+            <Link href="/maps?kecamatan=kuta selatan" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-[#1967D2] transition-all duration-300 focus:outline-none  ${activeButton === 'kuta selatan' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Kuta Selatan
-            </a>
-            <a href="/maps?kecamatan=mengwi" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            </Link>
+            <Link href="/maps?kecamatan=mengwi" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none  ${activeButton === 'mengwi' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Mengwi
-            </a>
-            <a href="/maps?kecamatan=abiansemal" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            </Link>
+            <Link href="/maps?kecamatan=abiansemal" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none  ${activeButton === 'abiansemal' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Abiansemal
-            </a>
-            <a href="/maps?kecamatan=petang" className="w-full bg-blue-500 text-white py-2 px-4 rounded text-center">
+            </Link>
+            <Link href="/maps?kecamatan=petang" className={`mt-2 text-center w-full rounded-lg bg-[#4285F4] px-2 py-2 text-white hover:bg-blue-700 transition-all duration-300 focus:outline-none ${activeButton === 'petang' ? 'bg-blue-700' : 'bg-[#4285F4]'}`}>
               Petang
-            </a>
-            <Link href="" onClick={handleLogout} className="w-full bg-red-500 text-white py-2 px-4 rounded text-center">
-                    Logout
+            </Link>
+            <Link href="" onClick={handleLogout} className="mt-2 text-center w-full rounded-lg bg-[#EA4D46] px-2 py-2 text-white hover:bg-[#EB3931] focus:outline-none focus:ring-2 focus:ring-[#EB0B01] transition-all duration-300">
+                    Keluar
             </Link>
           </div>
         </div>
