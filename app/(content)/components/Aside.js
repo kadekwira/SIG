@@ -96,10 +96,13 @@ const Sidebar = () => {
 
       if (all) {
         setActiveButton('all');
+        setIsSidebarOpen(!isSidebarOpen)
       } else if (findNearest) {
         setActiveButton('findNearest');
+        setIsSidebarOpen(!isSidebarOpen)
       } else if (kecamatan) {
         setActiveButton(kecamatan);
+        setIsSidebarOpen(!isSidebarOpen)
       } else {
         setActiveButton(null);
       }
@@ -109,13 +112,13 @@ const Sidebar = () => {
   }, [searchParams]);
 
   return (
-    <div className="flex flex-col md:h-screen h-fit">
+    <div className="flex flex-col md:min-h-screen h-full overflow-y-auto bg-gray-600">
       <div className="md:hidden bg-gray-600 p-4 fixed top-0 left-0 right-0 z-50">
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-white">
           <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} size="x" />
         </button>
       </div>
-      <div className={`bg-gray-600 w-full md:w-64 p-4 flex flex-col transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative fixed top-0 left-0 transition-transform duration-300 ease-in-out z-40 h-screen`}>
+      <div className={`bg-gray-600 w-full h-screen md:w-64 p-4 flex flex-col transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:relative fixed top-0 left-0 transition-transform duration-300 ease-in-out z-40 overflow-y-auto`}>
         <div className="md:mt-0 mt-16">
           <Logo md/>
           <hr className="border-t border-gray-300 my-4" />
