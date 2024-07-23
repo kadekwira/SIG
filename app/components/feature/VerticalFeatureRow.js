@@ -29,6 +29,10 @@ const VerticalFeatureRow = (props) => {
   if (props.type === 'default') {
     return (
       <div className={verticalFeatureClass}>
+        <div className="w-full p-6 sm:w-1/2">
+          <img src={props.image} alt={props.imageAlt} />
+        </div>
+  
         <div className="w-full text-center sm:w-1/2 sm:px-6">
           <h3 className="text-2xl font-semibold text-gray-900">{props.title}</h3>
           <div className="mt-6 text-l text-gray-400">{props.description}</div>
@@ -43,13 +47,10 @@ const VerticalFeatureRow = (props) => {
             </div>
           )}
         </div>
-
-        <div className="w-full p-6 sm:w-1/2">
-          <img src={props.image} alt={props.imageAlt} />
-        </div>
       </div>
     );
   }
+  
 
   if (props.type === 'multi-row') {
     return (
