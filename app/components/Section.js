@@ -9,10 +9,10 @@ const Section = (props) => (
     {(props.title || props.description) && (
       <div className="mb-12 text-center">
         {props.title && (
-          <h2 className="text-4xl font-bold text-gray-900">{props.title}</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{props.title}</h2>
         )}
         {props.description && (
-          <div className="mt-4 text-xl text-gray-400 md:px-20">{props.description}</div>
+          <div className="mt-4 text-l text-gray-400 md:px-20">{props.description}</div>
         )}
       </div>
     )}
